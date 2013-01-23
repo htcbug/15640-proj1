@@ -1,7 +1,7 @@
 package ProcessMigration;
 
-public interface MigratableProcess extends Runnable {
-	
-	void suspend();
+import java.io.Serializable;
 
+public interface MigratableProcess extends Runnable, Serializable {
+  void suspend();
 }

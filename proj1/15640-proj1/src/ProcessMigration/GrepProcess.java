@@ -1,71 +1,77 @@
 package ProcessMigration;
 
-import java.io.PrintStream;
-import java.io.EOFException;
 import java.io.DataInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
-import java.lang.Thread;
-import java.lang.InterruptedException;
+import java.io.PrintStream;
 
 public class GrepProcess implements MigratableProcess {
-	private TransactionalFileInputStream inFile;
-	private TransactionalFileOutputStream outFile;
-	private String query;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -2909800760440217455L;
 
-	private volatile boolean suspending;
+  /**
+   * 
+   */
+  private TransactionalFileInputStream inFile;
 
-	public GrepProcess(String args[]) throws Exception {
-		if (args.length != 3) {
-			System.out
-					.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
-			throw new Exception("Invalid Arguments");
-		}
+  private TransactionalFileOutputStream outFile;
 
-		query = args[0];
-		inFile = new TransactionalFileInputStream(args[1]);
-		outFile = new TransactionalFileOutputStream(args[2], false);
-	}
+  private String query;
 
-	@Override
-	public void run() {
-		PrintStream out = new PrintStream(outFile);
-		DataInputStream in = new DataInputStream(inFile);
+  private volatile boolean suspending;
 
-		try {
-			while (!suspending) {
-				String line = in.readLine();
+  public GrepProcess(String args[]) throws Exception {
+    if (args.length != 3) {
+      System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
+      throw new Exception("Invalid Arguments");
+    }
 
-				if (line == null)
-					break;
+    query = args[0];
+    inFile = new TransactionalFileInputStream(args[1]);
+    outFile = new TransactionalFileOutputStream(args[2], false);
+  }
 
-				if (line.contains(query)) {
-					out.println(line);
-				}
+  @Override
+  public void run() {
+    PrintStream out = new PrintStream(outFile);
+    DataInputStream in = new DataInputStream(inFile);
 
-				// Make grep take longer so that we don't require extremely
-				// large files for interesting results
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// ignore it
-				}
-			}
-		} catch (EOFException e) {
-			// End of File
-		} catch (IOException e) {
-			System.out.println("GrepProcess: Error: " + e);
-		}
+    try {
+      while (!suspending) {
+        @SuppressWarnings("deprecation")
+        String line = in.readLine(); // YANG: make aware of this, deprecated
 
-		suspending = false;
-	}
+        if (line == null)
+          break;
 
-	@Override
-	public void suspend() {
-		suspending = true;
-		while (suspending)
-			;
-	}
+        if (line.contains(query)) {
+          out.println(line);
+        }
+
+        // Make grep take longer so that we don't require extremely
+        // large files for interesting results
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          // ignore it
+        }
+      }
+    } catch (EOFException e) {
+      // End of File
+    } catch (IOException e) {
+      System.out.println("GrepProcess: Error: " + e);
+    }
+
+    suspending = false;
+  }
+
+  @Override
+  public void suspend() {
+    suspending = true;
+    while (suspending)
+      ;
+  }
 
 }
