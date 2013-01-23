@@ -11,12 +11,13 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
    */
   private static final long serialVersionUID = 378282270137012604L;
 
+  // Yang: What the hell is the boolean arg?!
   public TransactionalFileOutputStream(String string, boolean b) {
     // TODO Auto-generated constructor stub
   }
 
   @Override
-  public void write(int arg0) throws IOException {
+  public void write(int tarByte) throws IOException {
     // TODO Auto-generated method stub
 
   }
