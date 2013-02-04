@@ -66,7 +66,7 @@ public class GrepProcess implements MigratableProcess {
         }
       }
     } catch (EOFException e) {
-      // End of File
+      System.out.println("End of line " + e);
     } catch (IOException e) {
       System.out.println("GrepProcess: Error: " + e);
     }
@@ -77,7 +77,7 @@ public class GrepProcess implements MigratableProcess {
   @Override
   public void suspend() {
     suspending = true;
-//    System.out.println("received suspending");
+    System.out.println("received suspending");
     while (suspending)
       ;
   }

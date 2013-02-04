@@ -27,4 +27,22 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
     raf.close();
   }
 
+  @Override
+  public void write(byte[] b) throws IOException {
+    RandomAccessFile raf = new RandomAccessFile(filename, "rws");
+    raf.seek(offset);
+    raf.write(b);
+    offset += b.length;
+    raf.close();
+  }
+
+  @Override
+  public void write(byte[] b, int offset, int len) throws IOException {
+    RandomAccessFile raf = new RandomAccessFile(filename, "rws");
+    raf.seek(this.offset);
+    raf.write(b, offset, len);
+    this.offset += len;
+    raf.close();
+  }
+
 }
